@@ -115,6 +115,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
 
           // 3. Repeat Dropdown
           DropdownButtonFormField<RepeatFrequency>(
+            // ignore: deprecated_member_use
             value: _selectedRepeat,
             decoration: const InputDecoration(labelText: 'Repeat'),
             items: RepeatFrequency.values.map((freq) {

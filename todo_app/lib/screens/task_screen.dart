@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/services/notification_service.dart';
 import '../models/task.dart';
 import '../widgets/add_task_sheet.dart';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart'; // To get the user's ID
+import '../services/auth_service.dart'; // To get the logout function
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -15,7 +17,13 @@ class TaskScreen extends StatefulWidget {
 
 class _TaskScreenState extends State<TaskScreen> {
   // Access the Firestore database
-  final CollectionReference _tasksCollection = FirebaseFirestore.instance
+  // 1. Grab the unique ID of the person currently logged in
+  final String userId = FirebaseAuth.instance.currentUser!.uid;
+
+  // 2. Point the app to: users -> [Their ID] -> tasks
+  late final CollectionReference _tasksCollection = FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
       .collection('tasks');
 
   Timer? _timer;
@@ -70,7 +78,19 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My To-Do List'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('My To-Do List'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Log Out',
+            onPressed: () async {
+              await AuthService().logOut();
+            },
+          ),
+        ],
+        centerTitle: true,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(

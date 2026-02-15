@@ -30,6 +30,7 @@ class NotificationService {
     await _notificationsPlugin.initialize(
       settings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
+        // ignore: avoid_print
         print("Notification Tapped: ${response.payload}");
       },
     );
