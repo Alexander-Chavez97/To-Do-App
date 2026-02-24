@@ -1,8 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  // Grab the instance of Firebase Auth
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Maps Firebase error codes to clean, user-friendly messages
+  static String _mapFirebaseError(String code) {
+    switch (code) {
+      case 'email-already-in-use':
+        return 'This email is already registered.';
+      case 'weak-password':
+        return 'Password must be at least 6 characters.';
+      case 'user-not-found':
+        return 'No account found with this email.';
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Incorrect password. Please try again.';
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      default:
+        return 'Something went wrong. Please try again.';
+    }
+  }
 
   /// SIGN UP USER
   Future<User?> signUpWithEmailPassword(String email, String password) async {
@@ -13,9 +33,7 @@ class AuthService {
       );
       return credential.user;
     } on FirebaseAuthException catch (e) {
-      // If Firebase rejects the signup (e.g., email already in use, weak password),
-      // we throw the error message back to the UI to show the user.
-      throw Exception(e.message);
+      throw Exception(_mapFirebaseError(e.code));
     }
   }
 
@@ -28,8 +46,16 @@ class AuthService {
       );
       return credential.user;
     } on FirebaseAuthException catch (e) {
-      // Throws errors like "wrong password" or "user not found"
-      throw Exception(e.message);
+      throw Exception(_mapFirebaseError(e.code));
+    }
+  }
+
+  /// SEND PASSWORD RESET EMAIL
+  Future<void> sendPasswordReset(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw Exception(_mapFirebaseError(e.code));
     }
   }
 

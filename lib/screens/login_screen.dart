@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart'; // <-- 1. IMPORT ADDED
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,10 +11,11 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final AuthService _authService = AuthService(); // <-- Instantiate the service
+  final AuthService _authService = AuthService();
 
   bool _isLogin = true;
-  bool _isLoading = false; // <-- 2. LOADING STATE ADDED
+  bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -23,14 +24,69 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // A helper function to show error pop-ups at the bottom of the screen
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message.replaceAll('Exception: ', ''),
-        ), // Cleans up the text
+        content: Text(message.replaceAll('Exception: ', '')),
         backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _showSuccess(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  void _showForgotPasswordDialog() {
+    final resetEmailController = TextEditingController(
+      text: _emailController.text.trim(),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Password'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Enter your email and we\'ll send you a reset link.'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: resetEmailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final email = resetEmailController.text.trim();
+              if (email.isEmpty) return;
+              Navigator.pop(context);
+              try {
+                await _authService.sendPasswordReset(email);
+                if (mounted) _showSuccess('Reset link sent! Check your email.');
+              } catch (e) {
+                if (mounted) _showError(e.toString());
+              }
+            },
+            child: const Text('Send Link'),
+          ),
+        ],
       ),
     );
   }
@@ -71,37 +127,55 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   TextField(
                     controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                      border: OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.lock),
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
 
-                  // 3. THE UPDATED BUTTON
+                  // Forgot Password (only shown on login mode)
+                  if (_isLogin)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: _showForgotPasswordDialog,
+                        child: const Text('Forgot Password?'),
+                      ),
+                    ),
+
+                  const SizedBox(height: 16),
+
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    // If loading is true, disable the button to prevent double-clicks
                     onPressed: _isLoading
                         ? null
                         : () async {
                             final email = _emailController.text.trim();
                             final password = _passwordController.text.trim();
 
-                            // Basic validation
                             if (email.isEmpty || password.isEmpty) {
-                              _showError("Please fill in all fields.");
+                              _showError('Please fill in all fields.');
                               return;
                             }
 
-                            // Start the loading spinner
-                            setState(() {
-                              _isLoading = true;
-                            });
+                            setState(() => _isLoading = true);
 
                             try {
                               if (_isLogin) {
@@ -115,20 +189,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   password,
                                 );
                               }
-                              // SUCCESS! The StreamBuilder in main.dart will take over from here.
                             } catch (e) {
-                              // If Firebase rejects the login, show the error
                               _showError(e.toString());
                             } finally {
-                              // Stop the loading spinner (only if the screen is still visible)
                               if (mounted) {
-                                setState(() {
-                                  _isLoading = false;
-                                });
+                                setState(() => _isLoading = false);
                               }
                             }
                           },
-                    // Swap the text for a loading circle if _isLoading is true
                     child: _isLoading
                         ? const SizedBox(
                             height: 24,
@@ -151,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       _isLogin
                           ? "Don't have an account? Sign Up"
-                          : "Already have an account? Login",
+                          : 'Already have an account? Login',
                     ),
                   ),
                 ],

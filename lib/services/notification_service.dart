@@ -27,13 +27,7 @@ class NotificationService {
       linux: linuxSettings,
     );
 
-    await _notificationsPlugin.initialize(
-      settings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        // ignore: avoid_print
-        print("Notification Tapped: ${response.payload}");
-      },
-    );
+    await _notificationsPlugin.initialize(settings);
 
     // Request Android 13+ Permissions
     final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
@@ -69,18 +63,18 @@ class NotificationService {
       android: androidDetails,
     );
 
-    // Schedule (Version 17.0.0 syntax)
+    // Schedule a one-time exact notification
     await _notificationsPlugin.zonedSchedule(
-      id, // Positional
-      title, // Positional
-      body, // Positional
-      tz.TZDateTime.from(scheduledDate, tz.local), // Positional
-      platformDetails, // Positional
-      // Named parameters follow:
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledDate, tz.local),
+      platformDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
+      // matchDateTimeComponents intentionally omitted — notifications fire once only.
+      // Repeating tasks reschedule their own notification when completed.
     );
   }
 
