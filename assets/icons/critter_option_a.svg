@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Background: deep red -->
+  <rect width="1024" height="1024" rx="220" ry="220" fill="#C62828"/>
+
+  <!-- Body -->
+  <ellipse cx="512" cy="610" rx="295" ry="265" fill="#B71C1C"/>
+
+  <!-- Center body divider -->
+  <line x1="512" y1="355" x2="512" y2="875" stroke="#8B0000" stroke-width="14"/>
+
+  <!-- Head -->
+  <circle cx="512" cy="335" r="145" fill="#1A1A1A"/>
+
+  <!-- Eyes -->
+  <circle cx="453" cy="312" r="38" fill="white"/>
+  <circle cx="571" cy="312" r="38" fill="white"/>
+  <circle cx="462" cy="318" r="20" fill="#1A1A1A"/>
+  <circle cx="580" cy="318" r="20" fill="#1A1A1A"/>
+  <circle cx="456" cy="312" r="7" fill="white"/>
+  <circle cx="574" cy="312" r="7" fill="white"/>
+
+  <!-- Antennae -->
+  <path d="M468 210 Q435 148 400 118" stroke="#1A1A1A" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <circle cx="392" cy="108" r="28" fill="#1A1A1A"/>
+  <path d="M556 210 Q589 148 624 118" stroke="#1A1A1A" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <circle cx="632" cy="108" r="28" fill="#1A1A1A"/>
+
+  <!-- Spots with checkmarks (left) -->
+  <circle cx="385" cy="540" r="64" fill="#8B0000"/>
+  <polyline points="355,540 380,568 428,508" fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="392" cy="700" r="56" fill="#8B0000"/>
+  <polyline points="364,700 387,726 432,672" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Spots with checkmarks (right) -->
+  <circle cx="639" cy="540" r="64" fill="#8B0000"/>
+  <polyline points="609,540 634,568 682,508" fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="632" cy="700" r="56" fill="#8B0000"/>
+  <polyline points="604,700 627,726 672,672" fill="none" stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

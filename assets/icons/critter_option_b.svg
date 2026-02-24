@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Background: forest green -->
+  <rect width="1024" height="1024" rx="220" ry="220" fill="#1B5E20"/>
+
+  <!-- Bug body -->
+  <ellipse cx="512" cy="580" rx="255" ry="300" fill="#2E7D32"/>
+
+  <!-- Bug head -->
+  <circle cx="512" cy="295" r="125" fill="#2E7D32"/>
+
+  <!-- Neck connector -->
+  <ellipse cx="512" cy="390" rx="90" ry="40" fill="#2E7D32"/>
+
+  <!-- Eyes -->
+  <circle cx="458" cy="272" r="38" fill="white"/>
+  <circle cx="566" cy="272" r="38" fill="white"/>
+  <circle cx="467" cy="278" r="20" fill="#1B5E20"/>
+  <circle cx="575" cy="278" r="20" fill="#1B5E20"/>
+  <circle cx="461" cy="272" r="7" fill="white"/>
+  <circle cx="569" cy="272" r="7" fill="white"/>
+
+  <!-- Antennae -->
+  <line x1="476" y1="182" x2="434" y2="102" stroke="#81C784" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="424" cy="84" r="26" fill="#81C784"/>
+  <line x1="548" y1="182" x2="590" y2="102" stroke="#81C784" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="600" cy="84" r="26" fill="#81C784"/>
+
+  <!-- Legs -->
+  <line x1="257" y1="500" x2="148" y2="454" stroke="#388E3C" stroke-width="22" stroke-linecap="round"/>
+  <line x1="257" y1="585" x2="140" y2="585" stroke="#388E3C" stroke-width="22" stroke-linecap="round"/>
+  <line x1="257" y1="670" x2="148" y2="716" stroke="#388E3C" stroke-width="22" stroke-linecap="round"/>
+  <line x1="767" y1="500" x2="876" y2="454" stroke="#388E3C" stroke-width="22" stroke-linecap="round"/>
+  <line x1="767" y1="585" x2="884" y2="585" stroke="#388E3C" stroke-width="22" stroke-linecap="round"/>
+  <line x1="767" y1="670" x2="876" y2="716" stroke="#388E3C" stroke-width="22" stroke-linecap="round"/>
+
+  <!-- Big checkmark -->
+  <polyline points="362,580 466,690 672,430" fill="none" stroke="#69F0AE" stroke-width="78" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

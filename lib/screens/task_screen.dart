@@ -297,7 +297,7 @@ class _TaskScreenState extends State<TaskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My To-Do List'),
+        title: const Text('Critter'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Background: dark navy -->
+  <rect width="1024" height="1024" rx="220" ry="220" fill="#0D1B2A"/>
+
+  <!-- Bug body silhouette -->
+  <ellipse cx="512" cy="630" rx="245" ry="285" fill="#152535"/>
+
+  <!-- Bug head silhouette -->
+  <circle cx="512" cy="375" r="138" fill="#152535"/>
+
+  <!-- Neck -->
+  <ellipse cx="512" cy="468" rx="88" ry="38" fill="#152535"/>
+
+  <!-- Antennae -->
+  <path d="M465 254 Q428 174 396 130" stroke="#4FC3F7" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <circle cx="386" cy="114" r="26" fill="#4FC3F7"/>
+  <path d="M559 254 Q596 174 628 130" stroke="#4FC3F7" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <circle cx="638" cy="114" r="26" fill="#4FC3F7"/>
+
+  <!-- Glowing eye halos -->
+  <circle cx="455" cy="355" r="72" fill="#00E5FF" opacity="0.12"/>
+  <circle cx="569" cy="355" r="72" fill="#00E5FF" opacity="0.12"/>
+  <circle cx="455" cy="355" r="50" fill="#00E5FF" opacity="0.22"/>
+  <circle cx="569" cy="355" r="50" fill="#00E5FF" opacity="0.22"/>
+
+  <!-- Eyes -->
+  <circle cx="455" cy="355" r="36" fill="#00E5FF"/>
+  <circle cx="569" cy="355" r="36" fill="#00E5FF"/>
+
+  <!-- Pupils -->
+  <circle cx="463" cy="360" r="17" fill="#0D1B2A"/>
+  <circle cx="577" cy="360" r="17" fill="#0D1B2A"/>
+
+  <!-- Eye shine -->
+  <circle cx="458" cy="350" r="7" fill="white" opacity="0.8"/>
+  <circle cx="572" cy="350" r="7" fill="white" opacity="0.8"/>
+
+  <!-- Legs -->
+  <line x1="267" y1="560" x2="155" y2="510" stroke="#1E3A5F" stroke-width="22" stroke-linecap="round"/>
+  <line x1="267" y1="645" x2="148" y2="645" stroke="#1E3A5F" stroke-width="22" stroke-linecap="round"/>
+  <line x1="267" y1="730" x2="155" y2="780" stroke="#1E3A5F" stroke-width="22" stroke-linecap="round"/>
+  <line x1="757" y1="560" x2="869" y2="510" stroke="#1E3A5F" stroke-width="22" stroke-linecap="round"/>
+  <line x1="757" y1="645" x2="876" y2="645" stroke="#1E3A5F" stroke-width="22" stroke-linecap="round"/>
+  <line x1="757" y1="730" x2="869" y2="780" stroke="#1E3A5F" stroke-width="22" stroke-linecap="round"/>
+
+  <!-- Glowing checkmark on body -->
+  <polyline points="375,635 468,740 668,500" fill="none" stroke="#00E5FF" stroke-width="58" stroke-linecap="round" stroke-linejoin="round" opacity="0.25"/>
+  <polyline points="375,635 468,740 668,500" fill="none" stroke="#00E5FF" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
