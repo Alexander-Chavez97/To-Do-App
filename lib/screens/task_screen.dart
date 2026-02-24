@@ -236,13 +236,169 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 
+  void _showTaskDetail(Task task) {
+    final isOverdue =
+        task.dueDate.isBefore(DateTime.now()) && !task.isCompleted;
+    final color = isOverdue
+        ? Colors.red
+        : Theme.of(context).colorScheme.primary;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Drag handle
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+
+            // Title
+            Text(
+              task.title,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                decoration:
+                    task.isCompleted ? TextDecoration.lineThrough : null,
+                color: task.isCompleted ? Colors.grey : Colors.black,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Info chips
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _detailChip(Icons.label_outline, task.category, color),
+                _detailChip(
+                  Icons.schedule,
+                  _formatDate(task.dueDate),
+                  isOverdue ? Colors.red : Colors.grey[700]!,
+                ),
+                if (task.repeat != RepeatFrequency.none)
+                  _detailChip(
+                    Icons.repeat,
+                    'Repeats ${task.repeat.name}',
+                    Colors.teal,
+                  ),
+                if (task.isCompleted)
+                  _detailChip(
+                    Icons.check_circle_outline,
+                    'Completed',
+                    Colors.green,
+                  ),
+              ],
+            ),
+
+            // Notes section
+            if (task.description.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              const Text(
+                'NOTES',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  task.description,
+                  style: const TextStyle(fontSize: 15, height: 1.5),
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 24),
+
+            // Delete button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.redAccent,
+                ),
+                label: const Text(
+                  'Delete Task',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.redAccent),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _confirmDeleteTask(task.id, task.title);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _detailChip(IconData icon, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTaskCard(Task task) {
     final isOverdue =
         task.dueDate.isBefore(DateTime.now()) && !task.isCompleted;
+    final hasNotes = task.description.isNotEmpty;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       child: ListTile(
+        onTap: () => _showTaskDetail(task),
         leading: Checkbox(
           value: task.isCompleted,
           onChanged: (bool? value) async {
@@ -269,12 +425,24 @@ class _TaskScreenState extends State<TaskScreen> {
             }
           },
         ),
-        title: Text(
-          task.title,
-          style: TextStyle(
-            decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-            color: task.isCompleted ? Colors.grey : Colors.black,
-          ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                task.title,
+                style: TextStyle(
+                  decoration:
+                      task.isCompleted ? TextDecoration.lineThrough : null,
+                  color: task.isCompleted ? Colors.grey : Colors.black,
+                ),
+              ),
+            ),
+            if (hasNotes)
+              Padding(
+                padding: const EdgeInsets.only(left: 6),
+                child: Icon(Icons.notes, size: 16, color: Colors.grey[400]),
+              ),
+          ],
         ),
         subtitle: Text(
           '${task.category} • ${_formatDate(task.dueDate)}',
