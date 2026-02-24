@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 import 'screens/login_screen.dart';
+import 'screens/main_screen.dart';
 import 'services/notification_service.dart';
-import 'screens/task_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
             );
           }
           if (snapshot.hasData) {
-            return const TaskScreen();
+            return const MainScreen();
           }
 
           return const LoginScreen();
