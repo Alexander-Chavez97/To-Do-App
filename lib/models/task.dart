@@ -5,10 +5,11 @@ enum RepeatFrequency { none, daily, weekly, monthly }
 class Task {
   final String id;
   String title;
-  String description;
+  String description; // We will use this for your "Notes" feature!
   DateTime dueDate;
   bool isCompleted;
   RepeatFrequency repeat;
+  String category;
 
   Task({
     String? id,
@@ -17,6 +18,7 @@ class Task {
     required this.dueDate,
     this.isCompleted = false,
     this.repeat = RepeatFrequency.none,
+    this.category = 'General', // Default category
   }) : id = id ?? const Uuid().v4();
 
   void toggleComplete() {
@@ -52,6 +54,7 @@ class Task {
       'dueDate': dueDate.toIso8601String(),
       'isCompleted': isCompleted,
       'repeat': repeat.index,
+      'category': category, // Added to Firebase
     };
   }
 
@@ -63,6 +66,7 @@ class Task {
       dueDate: DateTime.parse(map['dueDate']),
       isCompleted: map['isCompleted'],
       repeat: RepeatFrequency.values[map['repeat']],
+      category: map['category'] ?? 'General', // Safe fallback for older tasks
     );
   }
 }
