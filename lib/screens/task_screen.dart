@@ -16,11 +16,11 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-  final String userId = FirebaseAuth.instance.currentUser!.uid;
+  final String? _userId = FirebaseAuth.instance.currentUser?.uid;
 
   late final CollectionReference _tasksCollection = FirebaseFirestore.instance
       .collection('users')
-      .doc(userId)
+      .doc(_userId ?? '')
       .collection('tasks');
 
   Timer? _timer;
@@ -56,17 +56,46 @@ class _TaskScreenState extends State<TaskScreen> {
   // ─── Firebase ────────────────────────────────────────────────────────────────
 
   Future<void> _addTaskToFirebase(Task task) async {
-    await NotificationService.scheduleNotification(
-      id: task.id.hashCode,
-      title: 'Task Due!',
-      body: task.title,
-      scheduledDate: task.dueDate,
-    );
-    await _tasksCollection.doc(task.id).set(task.toMap());
+    // Schedule notification independently — don't let it block or fail the save
+    try {
+      await NotificationService.scheduleNotification(
+        id: task.id.hashCode,
+        title: 'Task Due!',
+        body: task.title,
+        scheduledDate: task.dueDate,
+      );
+    } catch (_) {
+      // Notification permission may be missing; the task still saves
+    }
+
+    try {
+      await _tasksCollection.doc(task.id).set(task.toMap());
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to save task: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      rethrow; // Let the caller (AddTaskSheet) know it failed
+    }
   }
 
   Future<void> _updateTaskInFirebase(Task task) async {
-    await _tasksCollection.doc(task.id).update(task.toMap());
+    try {
+      await _tasksCollection.doc(task.id).update(task.toMap());
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update task: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _confirmDeleteTask(String id, String title) async {
@@ -505,6 +534,31 @@ class _TaskScreenState extends State<TaskScreen> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.cloud_off, size: 60, color: Colors.grey),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Could not load tasks',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${snapshot.error}',
+                          style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {

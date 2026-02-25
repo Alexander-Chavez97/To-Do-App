@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/task.dart';
 
 class AddTaskSheet extends StatefulWidget {
-  final Function(Task) onAddTask;
+  final Future<void> Function(Task) onAddTask;
 
   const AddTaskSheet({super.key, required this.onAddTask});
 
@@ -17,6 +17,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   DateTime _selectedDate = DateTime.now();
   String _selectedCategory = 'General';
   RepeatFrequency _selectedRepeat = RepeatFrequency.none;
+  bool _isSaving = false;
 
   final List<String> _categories = ['General', 'Work', 'School', 'Personal'];
 
@@ -151,19 +152,35 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                 ),
 
                 ElevatedButton(
-                  onPressed: () {
-                    if (_titleController.text.trim().isEmpty) return;
-                    final newTask = Task(
-                      title: _titleController.text.trim(),
-                      description: _notesController.text.trim(),
-                      dueDate: _selectedDate,
-                      category: _selectedCategory,
-                      repeat: _selectedRepeat,
-                    );
-                    widget.onAddTask(newTask);
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Save Task'),
+                  onPressed: _isSaving
+                      ? null
+                      : () async {
+                          if (_titleController.text.trim().isEmpty) return;
+                          final newTask = Task(
+                            title: _titleController.text.trim(),
+                            description: _notesController.text.trim(),
+                            dueDate: _selectedDate,
+                            category: _selectedCategory,
+                            repeat: _selectedRepeat,
+                          );
+                          setState(() => _isSaving = true);
+                          try {
+                            await widget.onAddTask(newTask);
+                            if (context.mounted) Navigator.pop(context);
+                          } catch (_) {
+                            // Error snackbar already shown by task_screen
+                            if (context.mounted) {
+                              setState(() => _isSaving = false);
+                            }
+                          }
+                        },
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Save Task'),
                 ),
               ],
             ),
